@@ -35,16 +35,16 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50vw;
-  height: 50vh;
+  width: 40vw;
+  height: 25vw;
   display: flex;
 }
 
 .slide-container {
   position: absolute;
-  left: -50vw;
-  width: 250vw;
-  height: 50vh;
+  left: -40vw;
+  width: 120vw;
+  height: 25vw;
   display: flex;
 }
 
@@ -69,7 +69,7 @@ h1 {
 }
 
 .slide {
-  width: 50vw;
+  width: 40vw;
   height: 100%;
 }
 
@@ -83,7 +83,7 @@ h1 {
 }
 
 .block {
-  width: 25vw;
+  width: 30vw;
   height: 60vh;
   position: absolute;
   background-color: #fff;
