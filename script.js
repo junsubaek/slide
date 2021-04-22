@@ -85,15 +85,15 @@ const changeImagesOrder = (direction) => {
 const moveSlide = () => {
   coordinate.movedDistance =
     DOMGroup.screen.clientWidth * coordinate.slideMoveRatio;
-  DOMGroup.slideContainer.style.transform = `translate(${-coordinate.movedDistance}px)`;
+  DOMGroup.slideContainer.style.transform = `translate3d(${-coordinate.movedDistance}px,0,0)`;
 };
 
 const moveRemainingDistance = () => {
   if (coordinate.slideMoveRatio > 0) {
-    DOMGroup.slideContainer.style.transform = `translate(-${DOMGroup.screen.clientWidth}px)`;
+    DOMGroup.slideContainer.style.transform = `translate3d(-${DOMGroup.screen.clientWidth}px,0,0)`;
     changeImagesOrder("LEFT");
   } else {
-    DOMGroup.slideContainer.style.transform = `translate(${DOMGroup.screen.clientWidth}px)`;
+    DOMGroup.slideContainer.style.transform = `translate3d(${DOMGroup.screen.clientWidth}px,0,0)`;
     changeImagesOrder("RIGHT");
   }
   // coordinate.movedDistance -
@@ -119,7 +119,7 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
       moveRemainingDistance();
       coordinate.skip = false;
     } else {
-      DOMGroup.slideContainer.style.transform = `translate(0px)`;
+      DOMGroup.slideContainer.style.transform = `translate3d(0,0,0)`;
       DOMGroup.slideContainer.addEventListener("transitionend", () => {
         resetCurrentState();
       });
