@@ -35,11 +35,9 @@ const flagGroup = {
 };
 
 const createImageElem = () => {
-  for (
-    let i = parseInt(imageGroup.paths.length / 2) - 1;
-    i <= parseInt(imageGroup.paths.length / 2) + 1;
-    i++
-  ) {
+  const selectImageStartPoint = parseInt(imageGroup.paths.length / 2) - 1;
+  const selectImageEndPoint = parseInt(imageGroup.paths.length / 2) + 1;
+  for (let i = selectImageStartPoint; i <= selectImageEndPoint; i++) {
     const image = document.createElement("img");
     image.src = imageGroup.paths[i].src;
     imageGroup.tempImages.push(image);
@@ -130,53 +128,47 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
 };
 
 const mouseDownHandler = (e) => {
-  if (flagGroup.availableKeyDown) {
-    coordinate.startX = e.clientX;
-    flagGroup.moveDown = true;
-  }
+  if (!flagGroup.availableKeyDown) return;
+
+  coordinate.startX = e.clientX;
+  flagGroup.moveDown = true;
 };
 
 const mouseUpHandler = () => {
-  if (flagGroup.moveDown) {
-    coordinate.moreThanHalf =
-      Math.abs(DOMGroup.screen.clientWidth * coordinate.slideMoveRatio) >=
-      DOMGroup.screen.clientWidth / 2
-        ? true
-        : false;
-    coordinate.skip =
-      Math.abs(coordinate.velocity.reduce((acc, v) => acc + v)) <
-        coordinate.maximumSkipFigure &&
-      Math.abs(coordinate.endX - coordinate.prevX) >=
-        coordinate.minimumSkipFigure
-        ? true
-        : false;
-    flagGroup.availableKeyDown = false;
-    flagGroup.moveDown = false;
-    checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
-  }
+  if (!flagGroup.moveDown) return;
+
+  coordinate.moreThanHalf =
+    Math.abs(DOMGroup.screen.clientWidth * coordinate.slideMoveRatio) >=
+    DOMGroup.screen.clientWidth / 2;
+  coordinate.skip =
+    Math.abs(coordinate.velocity.reduce((acc, v) => acc + v)) <
+      coordinate.maximumSkipFigure &&
+    Math.abs(coordinate.endX - coordinate.prevX) >=
+      coordinate.minimumSkipFigure;
+  flagGroup.availableKeyDown = false;
+  flagGroup.moveDown = false;
+  checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
 };
 
 const mouseMoveHandler = (e) => {
-  if (flagGroup.moveDown) {
-    coordinate.prevX = coordinate.endX;
-    coordinate.endX = coordinate.startX - e.clientX;
-    coordinate.slideMoveRatio = coordinate.endX / DOMGroup.screen.clientWidth;
-    coordinate.velocity.push(coordinate.endX);
-    moveSlide();
-  }
+  if (!flagGroup.moveDown) return;
+
+  coordinate.prevX = coordinate.endX;
+  coordinate.endX = coordinate.startX - e.clientX;
+  coordinate.slideMoveRatio = coordinate.endX / DOMGroup.screen.clientWidth;
+  coordinate.velocity.push(coordinate.endX);
+  moveSlide();
 };
 
 const mouseOutHandler = () => {
-  if (flagGroup.moveDown) {
-    coordinate.moreThanHalf =
-      Math.abs(DOMGroup.screen.clientWidth * coordinate.slideMoveRatio) >=
-      DOMGroup.screen.clientWidth / 2
-        ? true
-        : false;
-    flagGroup.availableKeyDown = false;
-    flagGroup.moveDown = false;
-    checkMovedDistance(coordinate.moreThanHalf);
-  }
+  if (!flagGroup.moveDown) return;
+
+  coordinate.moreThanHalf =
+    Math.abs(DOMGroup.screen.clientWidth * coordinate.slideMoveRatio) >=
+    DOMGroup.screen.clientWidth / 2;
+  flagGroup.availableKeyDown = false;
+  flagGroup.moveDown = false;
+  checkMovedDistance(coordinate.moreThanHalf);
 };
 
 DOMGroup.screen.addEventListener("mousedown", mouseDownHandler);
