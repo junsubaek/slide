@@ -21,7 +21,7 @@ body {
 
 h1 {
   position: absolute;
-  width: 30vw;
+  width: 100vw;
   color: black;
   font-size: 60px;
   left: 50%;
@@ -35,16 +35,17 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 40vw;
-  height: 25vw;
+  width: 50vw;
+  height: 30vw;
   display: flex;
+  overflow: hidden;
 }
 
 .slide-container {
   position: absolute;
-  left: -40vw;
-  width: 120vw;
-  height: 25vw;
+  left: -50vw;
+  width: 150vw;
+  height: 100%;
   display: flex;
 }
 
@@ -62,14 +63,14 @@ h1 {
 }
 
 .order {
-  font-size: 22px;
+  font-size: 1.5vw;
   font-weight: 900;
   color: white;
   margin-top: 2px;
 }
 
 .slide {
-  width: 40vw;
+  width: 50vw;
   height: 100%;
 }
 
@@ -82,52 +83,14 @@ h1 {
   -o-user-drag: none;
 }
 
-.block {
-  width: 30vw;
-  height: 60vh;
-  position: absolute;
-  background-color: #fff;
-}
-
-.block-1 {
-  left: 0;
-  top: 25vh;
-}
-
-.block-2 {
-  right: 0;
-  top: 25vh;
-}
-
 @media (max-width: 800px) {
-  * {
-    user-select: none;
-    -ms-user-select: none;
-    outline: 0;
-    margin: 0;
-    padding: 0;
-  }
-
-  html {
-    width: 100%;
-    height: 100%;
-  }
-
-  body {
-    width: 100vw;
-    overflow: hidden;
-    height: 100vh;
-    background: #fff;
-    margin: 0;
-  }
-
   h1 {
     position: absolute;
-    width: 30vw;
+    width: 100vw;
     color: black;
-    font-size: 20px;
+    font-size: 10vw;
     left: 50%;
-    top: 10%;
+    top: 20%;
     transform: translateX(-50%);
     text-align: center;
   }
@@ -164,7 +127,7 @@ h1 {
   }
 
   .order {
-    font-size: 10px;
+    font-size: 2.5vw;
     font-weight: 900;
     color: white;
     margin-top: 2px;
@@ -173,31 +136,5 @@ h1 {
   .slide {
     width: 100vw;
     height: 100%;
-  }
-
-  .slide img {
-    width: 100%;
-    height: 100%;
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
-  }
-
-  .block {
-    width: 0;
-    height: 0;
-    position: absolute;
-    background-color: #fff;
-  }
-
-  .block-1 {
-    left: 0;
-    top: 0;
-  }
-
-  .block-2 {
-    right: 0;
-    top: 0;
   }
 }

@@ -96,12 +96,6 @@ const moveRemainingDistance = () => {
     DOMGroup.slideContainer.style.transform = `translate3d(${DOMGroup.screen.clientWidth}px,0,0)`;
     changeImagesOrder("RIGHT");
   }
-  // coordinate.movedDistance -
-  //   DOMGroup.screen.clientWidth -
-  //   coordinate.movedDistance;
-  // coordinate.movedDistance +
-  //   DOMGroup.screen.clientWidth -
-  //   coordinate.movedDistance;
   DOMGroup.slideContainer.addEventListener("transitionend", () => {
     resetCurrentState();
     resetImages();
