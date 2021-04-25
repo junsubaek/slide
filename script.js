@@ -18,11 +18,11 @@ const imageGroup = {
 
 const coordinate = {
   startX: 0,
-  endX: 0,
+  movedX: 0,
   prevX: 0,
   slideMoveRatio: 0,
   movedDistance: 0,
-  velocity: [],
+  velocity: [0],
   moreThanHalf: false,
   skip: false,
   maximumSkipFigure: 1000,
@@ -33,9 +33,6 @@ const flagGroup = {
   moveDown: false,
   availableKeyDown: true,
 };
-
-let rafId;
-let move = 0;
 
 const createImageElem = () => {
   const selectImageStartPoint = parseInt(imageGroup.paths.length / 2) - 1;
@@ -65,9 +62,8 @@ const resetCurrentState = () => {
   DOMGroup.slideContainer.style.transform = "";
   DOMGroup.slideContainer.style.transition = "";
   imageGroup.tempImages = [];
-  coordinate.velocity = [];
+  coordinate.velocity = [0];
   flagGroup.availableKeyDown = true;
-  move = 0;
 };
 
 const resetOrderNumber = () => {
@@ -92,26 +88,6 @@ const moveSlide = () => {
   DOMGroup.slideContainer.style.transform = `translate3d(${-coordinate.movedDistance}px,0,0)`;
 };
 
-// const moveSlide = () => {
-//   lafId = requestAnimationFrame(moveSlide);
-
-//   if (coordinate.slideMoveRatio > 0) {
-//     if (move < coordinate.endX) {
-//       move += 3;
-//       DOMGroup.slideContainer.style.transform = `translate3d(${-move}px,0,0)`;
-//     } else {
-//       cancelAnimationFrame(lafId);
-//     }
-//   } else {
-//     if (move < -coordinate.endX) {
-//       move += 3;
-//       DOMGroup.slideContainer.style.transform = `translate3d(${move}px,0,0)`;
-//     } else {
-//       cancelAnimationFrame(lafId);
-//     }
-//   }
-// };
-
 const moveRemainingDistance = () => {
   if (coordinate.slideMoveRatio > 0) {
     DOMGroup.slideContainer.style.transform = `translate3d(-${DOMGroup.screen.clientWidth}px,0,0)`;
@@ -126,30 +102,6 @@ const moveRemainingDistance = () => {
     resetOrderNumber();
   });
 };
-// let acc = 0;
-// const moveRemainingDistance = () => {
-//   lafId = requestAnimationFrame(moveRemainingDistance);
-
-//   if (coordinate.slideMoveRatio > 0) {
-//     if (move <= DOMGroup.screen.clientWidth) {
-//       console.log(move);
-//       move += 1;
-
-//       DOMGroup.slideContainer.style.transform = `translate3d(-${move}px,0,0)`;
-//     } else {
-//       cancelAnimationFrame(lafId);
-//       changeImagesOrder("LEFT");
-//     }
-//   } else {
-//     DOMGroup.slideContainer.style.transform = `translate3d(${DOMGroup.screen.clientWidth}px,0,0)`;
-//     changeImagesOrder("RIGHT");
-//   }
-//   DOMGroup.slideContainer.addEventListener("transitionend", () => {
-//     resetCurrentState();
-//     resetImages();
-//     resetOrderNumber();
-//   });
-// };
 
 const checkMovedDistance = (moreThanHalf, skip = false) => {
   DOMGroup.slideContainer.style.transition = "0.15s";
@@ -169,16 +121,16 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
   }
 };
 
-const mouseDownHandler = (e) => {
-  if (devicePixelRatio !== 1) return;
+const startHandler = (e) => {
   if (!flagGroup.availableKeyDown) return;
 
-  coordinate.startX = e.clientX;
+  devicePixelRatio === 1
+    ? (coordinate.startX = e.clientX)
+    : (coordinate.startX = e.targetTouches[0].clientX);
   flagGroup.moveDown = true;
 };
 
-const mouseUpHandler = () => {
-  if (devicePixelRatio !== 1) return;
+const endHandler = () => {
   if (!flagGroup.moveDown) return;
 
   coordinate.moreThanHalf =
@@ -187,26 +139,26 @@ const mouseUpHandler = () => {
   coordinate.skip =
     Math.abs(coordinate.velocity.reduce((acc, v) => acc + v)) <
       coordinate.maximumSkipFigure &&
-    Math.abs(coordinate.endX - coordinate.prevX) >=
+    Math.abs(coordinate.movedX - coordinate.prevX) >=
       coordinate.minimumSkipFigure;
   flagGroup.availableKeyDown = false;
   flagGroup.moveDown = false;
   checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
 };
 
-const mouseMoveHandler = (e) => {
-  if (devicePixelRatio !== 1) return;
+const moveHandler = (e) => {
   if (!flagGroup.moveDown) return;
 
-  coordinate.prevX = coordinate.endX;
-  coordinate.endX = coordinate.startX - e.clientX;
-  coordinate.slideMoveRatio = coordinate.endX / DOMGroup.screen.clientWidth;
-  coordinate.velocity.push(coordinate.endX);
+  coordinate.prevX = coordinate.movedX;
+  devicePixelRatio === 1
+    ? (coordinate.movedX = coordinate.startX - e.clientX)
+    : (coordinate.movedX = coordinate.startX - e.targetTouches[0].clientX);
+  coordinate.slideMoveRatio = coordinate.movedX / DOMGroup.screen.clientWidth;
+  coordinate.velocity.push(coordinate.movedX);
   moveSlide();
 };
 
-const mouseOutHandler = () => {
-  if (devicePixelRatio !== 1) return;
+const outHandler = () => {
   if (!flagGroup.moveDown) return;
 
   coordinate.moreThanHalf =
@@ -217,47 +169,13 @@ const mouseOutHandler = () => {
   checkMovedDistance(coordinate.moreThanHalf);
 };
 
-const touchStartHandler = (e) => {
-  console.log(1);
-  if (!flagGroup.availableKeyDown) return;
+DOMGroup.screen.addEventListener("mousedown", startHandler);
+DOMGroup.screen.addEventListener("mouseup", endHandler);
+DOMGroup.screen.addEventListener("mousemove", moveHandler);
+DOMGroup.screen.addEventListener("mouseout", outHandler);
 
-  coordinate.startX = e.targetTouches[0].clientX;
-  flagGroup.moveDown = true;
-};
-
-const touchEndHandler = () => {
-  if (!flagGroup.moveDown) return;
-
-  coordinate.moreThanHalf =
-    Math.abs(DOMGroup.screen.clientWidth * coordinate.slideMoveRatio) >=
-    DOMGroup.screen.clientWidth / 2;
-  coordinate.skip =
-    Math.abs(coordinate.velocity.reduce((acc, v) => acc + v)) <
-      coordinate.maximumSkipFigure &&
-    Math.abs(coordinate.endX - coordinate.prevX) >=
-      coordinate.minimumSkipFigure;
-  flagGroup.availableKeyDown = false;
-  flagGroup.moveDown = false;
-  checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
-};
-
-const touchMoveHandler = (e) => {
-  if (!flagGroup.moveDown) return;
-
-  coordinate.prevX = coordinate.endX;
-  coordinate.endX = coordinate.startX - e.targetTouches[0].clientX;
-  coordinate.slideMoveRatio = coordinate.endX / DOMGroup.screen.clientWidth;
-  coordinate.velocity.push(coordinate.endX);
-  moveSlide();
-};
-
-DOMGroup.screen.addEventListener("mousedown", mouseDownHandler);
-DOMGroup.screen.addEventListener("mouseup", mouseUpHandler);
-DOMGroup.screen.addEventListener("mousemove", mouseMoveHandler);
-DOMGroup.screen.addEventListener("mouseout", mouseOutHandler);
-
-DOMGroup.screen.addEventListener("touchstart", touchStartHandler);
-DOMGroup.screen.addEventListener("touchend", touchEndHandler);
-DOMGroup.screen.addEventListener("touchmove", touchMoveHandler);
+DOMGroup.screen.addEventListener("touchstart", startHandler);
+DOMGroup.screen.addEventListener("touchend", endHandler);
+DOMGroup.screen.addEventListener("touchmove", moveHandler);
 
 resetImages();
