@@ -170,6 +170,7 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
 };
 
 const mouseDownHandler = (e) => {
+  if (devicePixelRatio !== 1) return;
   if (!flagGroup.availableKeyDown) return;
 
   coordinate.startX = e.clientX;
@@ -177,6 +178,7 @@ const mouseDownHandler = (e) => {
 };
 
 const mouseUpHandler = () => {
+  if (devicePixelRatio !== 1) return;
   if (!flagGroup.moveDown) return;
 
   coordinate.moreThanHalf =
@@ -193,6 +195,7 @@ const mouseUpHandler = () => {
 };
 
 const mouseMoveHandler = (e) => {
+  if (devicePixelRatio !== 1) return;
   if (!flagGroup.moveDown) return;
 
   coordinate.prevX = coordinate.endX;
@@ -203,6 +206,7 @@ const mouseMoveHandler = (e) => {
 };
 
 const mouseOutHandler = () => {
+  if (devicePixelRatio !== 1) return;
   if (!flagGroup.moveDown) return;
 
   coordinate.moreThanHalf =
@@ -214,6 +218,7 @@ const mouseOutHandler = () => {
 };
 
 const touchStartHandler = (e) => {
+  console.log(1);
   if (!flagGroup.availableKeyDown) return;
 
   coordinate.startX = e.targetTouches[0].clientX;
