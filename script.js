@@ -34,6 +34,9 @@ const flagGroup = {
   availableKeyDown: true,
 };
 
+let rafId;
+let move = 0;
+
 const createImageElem = () => {
   const selectImageStartPoint = parseInt(imageGroup.paths.length / 2) - 1;
   const selectImageEndPoint = parseInt(imageGroup.paths.length / 2) + 1;
@@ -64,6 +67,7 @@ const resetCurrentState = () => {
   imageGroup.tempImages = [];
   coordinate.velocity = [];
   flagGroup.availableKeyDown = true;
+  move = 0;
 };
 
 const resetOrderNumber = () => {
@@ -88,6 +92,26 @@ const moveSlide = () => {
   DOMGroup.slideContainer.style.transform = `translate3d(${-coordinate.movedDistance}px,0,0)`;
 };
 
+// const moveSlide = () => {
+//   lafId = requestAnimationFrame(moveSlide);
+
+//   if (coordinate.slideMoveRatio > 0) {
+//     if (move < coordinate.endX) {
+//       move += 3;
+//       DOMGroup.slideContainer.style.transform = `translate3d(${-move}px,0,0)`;
+//     } else {
+//       cancelAnimationFrame(lafId);
+//     }
+//   } else {
+//     if (move < -coordinate.endX) {
+//       move += 3;
+//       DOMGroup.slideContainer.style.transform = `translate3d(${move}px,0,0)`;
+//     } else {
+//       cancelAnimationFrame(lafId);
+//     }
+//   }
+// };
+
 const moveRemainingDistance = () => {
   if (coordinate.slideMoveRatio > 0) {
     DOMGroup.slideContainer.style.transform = `translate3d(-${DOMGroup.screen.clientWidth}px,0,0)`;
@@ -102,6 +126,30 @@ const moveRemainingDistance = () => {
     resetOrderNumber();
   });
 };
+// let acc = 0;
+// const moveRemainingDistance = () => {
+//   lafId = requestAnimationFrame(moveRemainingDistance);
+
+//   if (coordinate.slideMoveRatio > 0) {
+//     if (move <= DOMGroup.screen.clientWidth) {
+//       console.log(move);
+//       move += 1;
+
+//       DOMGroup.slideContainer.style.transform = `translate3d(-${move}px,0,0)`;
+//     } else {
+//       cancelAnimationFrame(lafId);
+//       changeImagesOrder("LEFT");
+//     }
+//   } else {
+//     DOMGroup.slideContainer.style.transform = `translate3d(${DOMGroup.screen.clientWidth}px,0,0)`;
+//     changeImagesOrder("RIGHT");
+//   }
+//   DOMGroup.slideContainer.addEventListener("transitionend", () => {
+//     resetCurrentState();
+//     resetImages();
+//     resetOrderNumber();
+//   });
+// };
 
 const checkMovedDistance = (moreThanHalf, skip = false) => {
   DOMGroup.slideContainer.style.transition = "0.15s";
@@ -165,9 +213,46 @@ const mouseOutHandler = () => {
   checkMovedDistance(coordinate.moreThanHalf);
 };
 
+const touchStartHandler = (e) => {
+  if (!flagGroup.availableKeyDown) return;
+
+  coordinate.startX = e.targetTouches[0].clientX;
+  flagGroup.moveDown = true;
+};
+
+const touchEndHandler = () => {
+  if (!flagGroup.moveDown) return;
+
+  coordinate.moreThanHalf =
+    Math.abs(DOMGroup.screen.clientWidth * coordinate.slideMoveRatio) >=
+    DOMGroup.screen.clientWidth / 2;
+  coordinate.skip =
+    Math.abs(coordinate.velocity.reduce((acc, v) => acc + v)) <
+      coordinate.maximumSkipFigure &&
+    Math.abs(coordinate.endX - coordinate.prevX) >=
+      coordinate.minimumSkipFigure;
+  flagGroup.availableKeyDown = false;
+  flagGroup.moveDown = false;
+  checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
+};
+
+const touchMoveHandler = (e) => {
+  if (!flagGroup.moveDown) return;
+
+  coordinate.prevX = coordinate.endX;
+  coordinate.endX = coordinate.startX - e.targetTouches[0].clientX;
+  coordinate.slideMoveRatio = coordinate.endX / DOMGroup.screen.clientWidth;
+  coordinate.velocity.push(coordinate.endX);
+  moveSlide();
+};
+
 DOMGroup.screen.addEventListener("mousedown", mouseDownHandler);
 DOMGroup.screen.addEventListener("mouseup", mouseUpHandler);
 DOMGroup.screen.addEventListener("mousemove", mouseMoveHandler);
 DOMGroup.screen.addEventListener("mouseout", mouseOutHandler);
+
+DOMGroup.screen.addEventListener("touchstart", touchStartHandler);
+DOMGroup.screen.addEventListener("touchend", touchEndHandler);
+DOMGroup.screen.addEventListener("touchmove", touchMoveHandler);
 
 resetImages();
