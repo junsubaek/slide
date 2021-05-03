@@ -121,6 +121,19 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
   }
 };
 
+const autoMoveSlide = () => {
+  DOMGroup.slideContainer.style.transition = "0.15s";
+  DOMGroup.slideContainer.style.transform = `translate3d(-${DOMGroup.screen.clientWidth}px,0,0)`;
+  changeImagesOrder("LEFT");
+  DOMGroup.slideContainer.addEventListener("transitionend", () => {
+    resetCurrentState();
+    resetImages();
+    resetOrderNumber();
+  });
+};
+
+let timer = setInterval(autoMoveSlide, 3000);
+
 const isMobile = () => {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi|mobi/i.test(
     navigator.userAgent
@@ -134,6 +147,7 @@ const startHandler = (e) => {
     ? (coordinate.startX = e.targetTouches[0].clientX)
     : (coordinate.startX = e.clientX);
   flagGroup.moveDown = true;
+  clearInterval(timer);
 };
 
 const endHandler = () => {
@@ -149,7 +163,11 @@ const endHandler = () => {
       coordinate.minimumSkipFigure;
   flagGroup.availableKeyDown = false;
   flagGroup.moveDown = false;
-  checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
+
+  if (coordinate.velocity.length > 3) {
+    checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
+  }
+  timer = setInterval(autoMoveSlide, 2000);
 };
 
 const moveHandler = (e) => {
