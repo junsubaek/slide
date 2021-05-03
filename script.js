@@ -121,12 +121,18 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
   }
 };
 
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi|mobi/i.test(
+    navigator.userAgent
+  );
+};
+
 const startHandler = (e) => {
   if (!flagGroup.availableKeyDown) return;
 
-  devicePixelRatio !== 3
-    ? (coordinate.startX = e.clientX)
-    : (coordinate.startX = e.targetTouches[0].clientX);
+  isMobile()
+    ? (coordinate.startX = e.targetTouches[0].clientX)
+    : (coordinate.startX = e.clientX);
   flagGroup.moveDown = true;
 };
 
@@ -150,9 +156,9 @@ const moveHandler = (e) => {
   if (!flagGroup.moveDown) return;
 
   coordinate.prevX = coordinate.movedX;
-  devicePixelRatio !== 3
-    ? (coordinate.movedX = coordinate.startX - e.clientX)
-    : (coordinate.movedX = coordinate.startX - e.targetTouches[0].clientX);
+  isMobile()
+    ? (coordinate.movedX = coordinate.startX - e.targetTouches[0].clientX)
+    : (coordinate.movedX = coordinate.startX - e.clientX);
   coordinate.slideMoveRatio = coordinate.movedX / DOMGroup.screen.clientWidth;
   coordinate.velocity.push(coordinate.movedX);
   moveSlide();
