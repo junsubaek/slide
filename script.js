@@ -124,7 +124,7 @@ const checkMovedDistance = (moreThanHalf, skip = false) => {
 const startHandler = (e) => {
   if (!flagGroup.availableKeyDown) return;
 
-  devicePixelRatio === 1
+  devicePixelRatio !== 3
     ? (coordinate.startX = e.clientX)
     : (coordinate.startX = e.targetTouches[0].clientX);
   flagGroup.moveDown = true;
