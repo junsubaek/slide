@@ -150,7 +150,7 @@ const moveHandler = (e) => {
   if (!flagGroup.moveDown) return;
 
   coordinate.prevX = coordinate.movedX;
-  devicePixelRatio === 1
+  devicePixelRatio !== 3
     ? (coordinate.movedX = coordinate.startX - e.clientX)
     : (coordinate.movedX = coordinate.startX - e.targetTouches[0].clientX);
   coordinate.slideMoveRatio = coordinate.movedX / DOMGroup.screen.clientWidth;
