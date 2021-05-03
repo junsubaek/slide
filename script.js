@@ -132,7 +132,7 @@ const autoMoveSlide = () => {
   });
 };
 
-let timer = setInterval(autoMoveSlide, 3000);
+let timer = setInterval(autoMoveSlide, 4000);
 
 const isMobile = () => {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi|mobi/i.test(
@@ -147,7 +147,6 @@ const startHandler = (e) => {
     ? (coordinate.startX = e.targetTouches[0].clientX)
     : (coordinate.startX = e.clientX);
   flagGroup.moveDown = true;
-  clearInterval(timer);
 };
 
 const endHandler = () => {
@@ -166,8 +165,11 @@ const endHandler = () => {
 
   if (coordinate.velocity.length > 3) {
     checkMovedDistance(coordinate.moreThanHalf, coordinate.skip);
+  } else {
+    resetCurrentState();
   }
-  timer = setInterval(autoMoveSlide, 2000);
+  clearInterval(timer);
+  timer = setInterval(autoMoveSlide, 4000);
 };
 
 const moveHandler = (e) => {
@@ -180,6 +182,7 @@ const moveHandler = (e) => {
   coordinate.slideMoveRatio = coordinate.movedX / DOMGroup.screen.clientWidth;
   coordinate.velocity.push(coordinate.movedX);
   moveSlide();
+  clearInterval(timer);
 };
 
 const outHandler = () => {
@@ -191,6 +194,8 @@ const outHandler = () => {
   flagGroup.availableKeyDown = false;
   flagGroup.moveDown = false;
   checkMovedDistance(coordinate.moreThanHalf);
+  clearInterval(timer);
+  timer = setInterval(autoMoveSlide, 4000);
 };
 
 DOMGroup.screen.addEventListener("mousedown", startHandler);
